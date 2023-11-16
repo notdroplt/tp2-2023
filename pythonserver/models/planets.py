@@ -1,4 +1,4 @@
-from app.extensions import db
+from pythonserver.extensions import db
 
 class Planet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
