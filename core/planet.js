@@ -39,13 +39,14 @@ class Planet {
         }, 0)
     }
 
+    
     get temperature() {
         return 1 / this.coordinate.distance(this.star.coordinate) * this.albedo
     }
 
 
     extract(target_element) {
-
+        
     }
 
 }
