@@ -2,7 +2,16 @@ FROM alpine:edge
 
 WORKDIR /app
 
-RUN mkdir build 
+ENV PORT=3000
+
+EXPOSE $PORT
 
 RUN apk update && apk upgrade
+
+RUN apk add nodejs npm
+
+COPY . .
+
+RUN npm install 
+
 

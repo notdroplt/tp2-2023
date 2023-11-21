@@ -1,5 +1,7 @@
+'use strict';
+
 import np from 'jsnumpy';
-import { Complex } from './complex'
+import { Complex } from './complex.mjs';
 
 class Fractals {
     /**

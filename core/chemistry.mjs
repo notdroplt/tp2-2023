@@ -1,3 +1,5 @@
+'use strict';
+
 class ElectronShell {
     /**
      * construct a single shell
@@ -48,7 +50,6 @@ class Eletrosphere {
 
     get electrons() {
         return this.shells.reduce((acc, curr) => {
-            console.log({acc, curr})
             if (curr.layer in acc)
                 acc[curr.layer] += curr.amount
             else 
@@ -73,7 +74,7 @@ class Eletrosphere {
 }
 
 
-class Atom {
+export class Atom {
     constructor(name, atomic_mass, boil, category, density, melt, molar_heat, number, group, period, symbol, shells, electron_configuration, electron_affinity, color) {
         this.name = name
         this.atomic_mass = atomic_mass
@@ -87,8 +88,10 @@ class Atom {
         this.period = period
         this.symbol = symbol
         this.shells = shells
-        this.electron_configuration = electron_configuration
+        this.electron_configuration = Eletrosphere.fromString(electron_configuration)
         this.electron_affinity = electron_affinity
         this.color = color
     }
+
+
 }

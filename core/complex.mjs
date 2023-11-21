@@ -1,4 +1,11 @@
-class Complex {
+'use strict';
+
+/**
+ * @class Complex
+ * 
+ * Define complex numbers in js
+ */
+export class Complex {
 
     /**
      * Generate a Complex Number
@@ -10,6 +17,9 @@ class Complex {
         this.imag = b
     }
 
+    /**
+     * get the magnitude of a complex number
+     */
     get abs() {
         return Math.sqrt(this.real * this.real + this.imag * this.imag)
     }
@@ -69,7 +79,14 @@ class Complex {
         )
     }
 
+
+    /**
+     * multiply two numbers
+     * @param {Complex} other another complex number
+     * @returns Complex
+     */
     mul(other) {
+
         if ((this.isInfinite && other.isZero) || (this.isZero && other.isInfinite))
             return Complex.NaN
 
@@ -203,5 +220,3 @@ class Complex {
         return new Complex(this.real / dis, -this.imag / dis)
     }
 }
-
-export { Complex }
