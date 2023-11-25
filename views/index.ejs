@@ -21,13 +21,13 @@
     <div id="signin"
         class="draggable absolute top-1/2 left-1/4 border-cyan-100 rounded-md border-2 p-4 h-2/5 flex flex-col justify-evenly bg-black cursor-move">
         <h1>No boy's sky</h1>
-        <label for="user" class="text-cyan-50 hover:text-cyan-300">Usuário:</label>
-        <input type="text" id="username" name="user" minlength="4" maxlength="30" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500">
+        <label for="player" class="text-cyan-50 hover:text-cyan-300">Usuário:</label>
+        <input type="text" id="playertag" name="player" minlength="4" maxlength="30" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500">
         <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Senha:</label>
-        <input type="password" id="userpassword" name="password"
+        <input type="password" id="playerpassword" name="password"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-cyan-500 dark:focus:border-cyan-500">
         <div class="flex justify-between w-full">
-            <button type="submit" id="login" onclick="authenticate('login')" class="p-2 rounded-sm ">Cadastrar</button>
+            <button type="submit" id="login" onclick="authenticate('signup')" class="p-2 rounded-sm ">Cadastrar</button>
             <button type="submit" id="signin" onclick="authenticate('signin')" class="p-2 transition ease-in-out rounded-sm bg-cyan-500 hover:bg-cyan-700 text-white">Entrar</button>
         </div>
         <p id="authresponse" class="text-red-700"></p>

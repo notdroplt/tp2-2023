@@ -1,9 +1,9 @@
 'use strict';
 
-import np from 'jsnumpy';
+import { linspace, apply2d, map2d } from "./matrix.mjs";
 import { Complex } from './complex.mjs';
 
-class Fractals {
+export class Fractals {
     /**
      * Calculates how much a complex number diverges in a mandelbrot sequence
      * @param {Complex} start start position
@@ -34,8 +34,18 @@ class Fractals {
      * @param {Number} exponent Julia exponent
      */
     static julia_divergence_range(constant, convergence_count, coordinate = Complex("0+0j"), step = 1.4, size = 11, exponent = 2) {
-        let xl = np.linspace(coordinate.real - step, coordinate.real + step, size)
-        let yl = np.linspace(coordinate.imag - step, coordinate.imag + step, size)
-        let [x, y] = 1
+        const xl = linspace(coordinate.real - step, coordinate.real + step, size)
+        const yl = linspace(coordinate.imag - step, coordinate.imag + step, size)
+        const mat = apply2d(new Complex, xl, yl)
+
+        return map2d(v => {
+            let z = new Complex(0, 0)
+            for (let i = 0; i < convergence_count; ++i) {
+                z = z.pow(new Complex(exponent)).add(constant)
+                if (z.abs > convergence_count)
+                    return i                
+            }
+            return convergence_count
+        }, mat)
     }
 }

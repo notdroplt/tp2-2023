@@ -74,19 +74,6 @@ class ComplexRng {
  */
 function sigmoid(x) { Math.exp(x) / (1 + Math.exp(x)) }
 
-/**
- * Generate a linear space divided into equidistant parts
- * @param {Number} start start of the linear space
- * @param {Number} stop end of the linear space
- * @param {Number} count amount of times to divide the space into
- * @returns Array going from start -> stop
- */
-function linspace(start, stop, count = 10) {
-    const inc = (stop - start) / (count - 1)
-    return Array(count).fill(start).forEach(
-        (value, index) => value + index * inc
-    )
-}
 
 /**
  * Calculates a normal distribution of x given µ and σ 
@@ -140,4 +127,4 @@ function getState(element_index, temperature) {
     return 'liquid';    
 }
 
-export { Coordinate, linspace, sigmoid, ComplexRng, normalDistribution, normalDistribution_function, hexToRgb, getState }
+export { Coordinate, sigmoid, ComplexRng, normalDistribution, normalDistribution_function, hexToRgb, getState }

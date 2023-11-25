@@ -3,7 +3,7 @@
 import { Coordinate, normalDistribution, hexToRgb, getState } from "./misc.mjs"
 import ptable from "./ptable.json" assert { type: 'json'};
 import { Star } from "./star.mjs"
-
+import { Complex } from "./complex.mjs";
 class Planet {
 
     /**
@@ -24,8 +24,14 @@ class Planet {
         this.seed = seed
     }
 
-    get_element_ratio(element) {
-        
+    elementRatio(element) {
+        //     put heavier elements rarier
+        return normalDistribution(element, 0, 40) +
+        //     funky pt 1
+               normalDistribution(element, this.seed.realNormal, Math.hypot(element, this.seed.imagNormal)) +
+        //     funky pt 2
+               normalDistribution(element, this.seed.imagNormal, Math.hypot(element, this.seed.realNormal))
+
     }
 
     /**
@@ -34,6 +40,8 @@ class Planet {
      * Planet color won't reflect reality, but it is good enough
      */
     get albedo() {
+        let elements_ratio = Array(ptable["order"].length).fill(0).map((_, index) => this.elementRatio(index))
+
         return this.elements_ratio
             .map((value, index) => { return { value, index } })
             .filter((v) => v.value > 0.003) // only get significant values

@@ -1,55 +1,64 @@
 
 import crypto from "node:crypto"
 import { database } from "./database.mjs"
-
+import * as serror from "./server_auth_errors.mjs"
 /**
- * middleware for login a user in
+ * middleware for signing a player up
  * @param {Request} req request
  * @param {Response} res response
  * @param {NextFunction} next next
  */
-async function login(req, res, next) {
-    if (req.body.user.length < 4 || req.body.user.length > 30) {
+async function signup(req, res, next) {
+    if (req.body.player.length < 4 || req.body.player.length > 30) {
         req.shouldSkipNext = true
         res.send({
             ok: false,
-            error: 'nome de usuário'
+            error: serror.USERNAME_LENGTH
         })
 
         return next('route')
     }
 
-    const records = await database.models.User.findAll({
+    const records = await database.models.Player.findAll({
         where: {
-            username: req.body.user
+            playertag: req.body.player
         }
     })
-
-           
-    let hash = crypto.createHash('sha256')
-    hash.update(req.body.password)
     
-    let digest = hash.digest('base64')
     if (records.length === 0) {
-        await database.models.User.create({
-            username: req.body.user,
-            password: digest
+        let hash = crypto.createHash('sha256')
+        hash.update(req.body.password)
+        let digest = hash.digest('base64')
+        const time = new Date().toISOString()
+        hash = crypto.createHash('sha256')
+        hash.update(req.body.password)
+        hash.update(req.body.player)
+        hash.update(time)
+        const playerid = hash.digest('base64')
+        console.log(`PLAYER SIGNUP: { Player: ${req.body.player}, time: ${time}, playerid: ${playerid}}`)
+        const player = await database.models.Player.create({
+            playertag: req.body.player,
+            password: digest,
+            playerid: playerid
+        }, {
+            include: [{
+                association: database.models.Player.Inventory
+            }]
         })
 
         await database.db.sync()
+
+        return res.send({
+            ok: true,
+            playertag: req.body.player,
+            playerid: playerid
+        })
     }
     
-    next()
-}
-
-/**
- * middleware for sign a user in
- * @param {Request} req request
- * @param {Response} res response
- * @param {NextFunction} next next
- */
-function signin(req, res, next) {
-
+    return res.send({
+        ok: false,
+        error: serror.USERNAME_ALREADY_TAKEN
+    })
 }
 
 /**
@@ -58,8 +67,58 @@ function signin(req, res, next) {
  * @param {Response} res response
  * @param {NextFunction} next next
  */
-function authenticate (req, res, next) {
+async function authenticate (req, res, next) {
+    if (req.body.player.length < 4 || req.body.player.length > 30) {
+        req.shouldSkipNext = true
+        res.send({
+            ok: false,
+            error: serror.USERNAME_LENGTH
+        })
+
+        return next('route')
+    }
+
+    const records = await database.models.User.findAll({
+        where: {
+            playername: req.body.player,
+            password
+        }
+    })
+
+    if (records.length === 0) {
+        req.shouldSkipNext = true
+        res.send({
+            ok: false,
+            error: serror.USERNAME_DOES_NOT_EXIST
+        })
+
+        return next('route')
+    }
+
+    const player = records[0]
+
+    let given_hash = crypto.createHash('sha256')
+    let actual_hash = crypto.createHash('sha256')
     
+    given_hash.update(req.body.password)
+    actual_hash.update(player.dataValues.password)
+
+    const given_digest = given_hash.digest()
+    const actual_digest = actual_hash.digest()
+
+    if (given_digest !== actual_digest) {
+        req.shouldSkipNext = true
+        res.send({
+            ok: false,
+            error: serror.USERNAME_PASSWORD_MISMATCH
+        })
+
+        return next('route')
+    }
+
+    req.player = player.dataValues
+
+    next()
 }
 
-export {signin, login, authenticate}
+export {signup, authenticate}

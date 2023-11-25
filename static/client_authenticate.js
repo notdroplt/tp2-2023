@@ -1,14 +1,14 @@
 /**
- * authenticate user
+ * authenticate player
  * @param {'login' | 'signin'} action action (either 'signin' or 'login')
  */
 function authenticate(action) {
-    const username = document.querySelector("input#username")
-    const password = document.querySelector("input#userpassword")
+    const playertag = document.querySelector("input#playertag")
+    const password = document.querySelector("input#playerpassword")
     const authresp = document.querySelector("p#authresponse")
 
-    if (action == "signin")
-        fetch(`/api/userauth/login`, {
+    if (action == "signup")
+        fetch(`/api/playerauth/signup`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -17,14 +17,28 @@ function authenticate(action) {
             mode: "cors",
             cache: "default",
             body: JSON.stringify({
-                user: username.value,
+                player: playertag.value,
                 password: password.value // lol
             })
         })
         .then(res => res.json())
         .then(json => {
+            console.log(json)
             if (json.ok == false) {
                 authresp.innerHTML = json.error
             }
+            localStorage.setItem("playertag", json.playertag)
+            localStorage.setItem("playerid", json.playerid)
         })
+}
+
+let playerinfo = {
+    tag: localStorage.getItem("playertag"),
+    id: localStorage.getItem("playerid")
+}
+
+window.onload = () => {
+    if (playerinfo.tag === null && playerinfo.id === null) return
+
+    
 }

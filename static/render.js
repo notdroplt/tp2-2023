@@ -48,7 +48,7 @@ function generate_stars() {
 
 (() => {
     for (let i = 0; i < 250; i++) {
-        setTimeout(generate_stars, i )
+        setTimeout(generate_stars, i)
     }
 })()
 
@@ -57,14 +57,15 @@ star.position.x = 4
 
 scene.add(star)
 
-const fps = 12
-let fps_ratio = 1
-let cam = {
+export const fps = 12
+export let fps_ratio = 1
+
+export let cam = {
     acc: new THREE.Vector3(0, 0, 0),
     vel: new THREE.Vector3(0, 0, 0),
 }
 
-let start, previousts;
+export let start, previousts;
 
 
 // Animation loop
@@ -75,25 +76,27 @@ const animate = (timestamp) => {
         previousts = start
     }
     const elapsed = timestamp - start;
-    const delta = timestamp - previousts 
+    const delta = timestamp - previousts
     previousts = timestamp
 
-    
+
     sphere.rotation.z += 0.001
     sphere.rotation.y += 0.015
-    
+
     if (cam.acc.lengthSq() > 0.3 && delta !== 0) {
         cam.acc.divideScalar(1.5 / delta)
         cam.vel.add(cam.acc.divideScalar(delta))
         camera.position.add(cam.vel.divideScalar(delta))
     }
-    
+
     renderer.render(scene, camera);
-    
-    setTimeout(() => {
-        requestAnimationFrame(animate)
-    }, 1000 / (fps * fps_ratio))
+
+
 };
+
+requestAnimationFrame(animate)
+
+//setInterval(() => requestAnimationFrame(animate), 1000 / (fps * fps_ratio));
 
 // Handle window resize
 window.addEventListener('resize', () => {
@@ -102,20 +105,16 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-window.onblur = () => {
-    fps_ratio = 0.1
-}
+window.onblur = () => { fps_ratio = 0.1 }
 
-window.onfocus = () => {
-    fps_ratio = 1
-}
+window.onfocus = () => { fps_ratio = 1 }
 
 /**
  * Handles some keyboard eventss
  * @param {KeyboardEvent} ev event
  */
 window.onkeydown = (ev) => {
-    if (ev.key == "ArrowLeft") 
+    if (ev.key == "ArrowLeft")
         cam.acc.x -= 10
     else if (ev.key == "ArrowUp")
         cam.acc.y += 10
@@ -128,3 +127,4 @@ window.onkeydown = (ev) => {
 
 // Start the animation loop
 animate();
+

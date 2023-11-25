@@ -43,6 +43,12 @@ export class Complex {
         )
     }
 
+    get polar() {
+        const r = Math.hypot(this.real, this.imag);
+        const theta = Math.atan2(this.imag, this.real);
+        return { r, theta };
+    }
+
     /**
      * Sum two complex numbers together
      * @param {Complex} other other number to add
@@ -140,6 +146,22 @@ export class Complex {
         )
     }
 
+    /**
+     * raise this to the w
+     * @param {Complex} w power to raise
+     */
+    pow(w) {
+        const { r0, theta0 } = this.polar;
+
+        const R = Math.pow(r0, w.real) * Math.exp(-w.imag * theta0);
+        const Theta = w.real * theta0 + w.imag * Math.log(r0);
+
+        return new Complex(R * Math.cos(Theta), R * Math.sin(Theta));
+    }
+
+    /**
+     * Calculate current sine
+     */
     get sin () {
         return new Complex(
             Math.sin(this.real) * Math.cosh(this.imag),
@@ -219,4 +241,16 @@ export class Complex {
 
         return new Complex(this.real / dis, -this.imag / dis)
     }
+
+    get realNormal() {
+        return this.real / this.abs
+    }
+
+    get imagNormal() {
+        return this.imag / this.abs
+    }
 }
+
+Complex.Zero = new Complex(0, 0)
+Complex.Infinity = new Complex(Infinity, Infinity)
+Complex.NaN = new Complex(NaN, NaN)

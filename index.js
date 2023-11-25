@@ -9,8 +9,10 @@ import { Star } from './core/star.mjs';
 import ejs from 'ejs'
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { signin, login, authenticate } from './orm/server_authenticate.mjs';
+import { signup, authenticate } from './orm/server_authenticate.mjs';
 import { database } from './orm/database.mjs';
+
+import { player_router } from './api/player.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,9 +27,9 @@ app.set('view engine', 'ejs')
 
 app.use(express.static(path.join(__dirname, 'static')));
 
-Object.values(database.models).forEach(async el =>
-    await el.sync()
-)
+app.use('/api/player', player_router)
+
+Object.values(database.models).forEach(async el => await el.sync())
 
 
 let star = new Star(1, new Coordinate(0, 0, 0))
@@ -81,10 +83,7 @@ app.get('/api/planet/:plname/prop/:prop', (req, res) => {
     })
 })
 
-app.post('/api/userauth/login', login, (req, res, next) => {
-    if (req.shouldSkipNext) return next()
-    
-})
+app.post('/api/playerauth/signup', signup)
 
 
 app.listen(3000, () => {
