@@ -9,10 +9,12 @@ import { Star } from './core/star.mjs';
 import ejs from 'ejs'
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { signup, authenticate } from './orm/server_authenticate.mjs';
 import { database } from './orm/database.mjs';
 
+import { auth_router } from './orm/server_authenticate.mjs';
 import { player_router } from './api/player.mjs';
+import { Complex } from './core/complex.mjs';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,15 +30,21 @@ app.set('view engine', 'ejs')
 app.use(express.static(path.join(__dirname, 'static')));
 
 app.use('/api/player', player_router)
+app.use('/api/auth', auth_router)
 
 Object.values(database.models).forEach(async el => await el.sync())
 
 
 let star = new Star(1, new Coordinate(0, 0, 0))
 
-let arr = new Array(119).fill(5).map((v, i) => v / (1+i))
 
-let plt = new Planet("mt00001", 1.534e12, arr, new Coordinate(1.5e11, 0, 0), star)
+let plt = new Planet(1.534e12, star, new Complex(-.05, 1.5))
+console.log(plt.name)
+app.use(function (req, res, next) {
+    console.log(`${req.method} "${req.path}" ${req.ip}`)
+
+    next();
+});
 
 app.get('/', (req, res) => {
     res.render('index')
@@ -82,9 +90,6 @@ app.get('/api/planet/:plname/prop/:prop', (req, res) => {
         property: plt[`${req.params.prop}`]
     })
 })
-
-app.post('/api/playerauth/signup', signup)
-
 
 app.listen(3000, () => {
     console.log("listening on port 3000")

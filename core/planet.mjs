@@ -8,25 +8,23 @@ class Planet {
 
     /**
      * Define a planet class
-     * @param {String} name planet name
      * @param {Number} mass planet total mass
-     * @param {Array<Number>} elements_ratio ratio of element inside of the planet
-     * @param {Coordinate} coordinate xyz coordinate
      * @param {Star} star system's star
      * @param {Complex} seed planet seed
      */
-    constructor(name, mass, elements_ratio, coordinate, star, seed) {
-        this.name = name
+    constructor(mass, star, seed) {
         this.mass = mass
-        this.elements_ratio = elements_ratio
-        this.coordinate = coordinate
+        this.coordinate = new Coordinate(seed.real, seed.imag, seed.conjugate.abs)
         this.star = star
         this.seed = seed
+        this.name = `pl${Math.abs(Math.trunc(this.seed.real * 10))}${Math.abs(Math.trunc(this.seed.imag * 10))}${Math.trunc(Math.log1p(this.mass))}`
     }
 
     elementRatio(element) {
         //     put heavier elements rarier
         return normalDistribution(element, 0, 40) +
+        //     planets further from the star can have a bigger chance to be gas giants
+               normalDistribution(element, 1 / this.distanceOrigin, this.seed.abs) +
         //     funky pt 1
                normalDistribution(element, this.seed.realNormal, Math.hypot(element, this.seed.imagNormal)) +
         //     funky pt 2
@@ -40,18 +38,16 @@ class Planet {
      * Planet color won't reflect reality, but it is good enough
      */
     get albedo() {
-        let elements_ratio = Array(ptable["order"].length).fill(0).map((_, index) => this.elementRatio(index))
 
-        return this.elements_ratio
-            .map((value, index) => { return { value, index } })
-            .filter((v) => v.value > 0.003) // only get significant values
-            .reduce((accumulator, current) => {
-                const name = ptable["order"][current.index]
+        return Array(ptable["order"].length).fill(0)
+            .map((_, index) => this.elementRatio(index) )
+            .reduce((accumulator, current, index) => {
+                const name = ptable["order"][index]
                 const colors = hexToRgb(ptable[name]['cpk_hex'])
 
                 const luminance = colors.r * .299 + colors.g * .587 * colors.b * .114
 
-                return accumulator + luminance * current.value
+                return accumulator + luminance * current
             }, 0)
     }
 

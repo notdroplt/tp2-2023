@@ -17,6 +17,10 @@ export class Complex {
         this.imag = b
     }
 
+    static fromPolar(r, theta) {
+        return new Complex(r * Math.cos(theta), r * Math.sin(theta));
+    }
+
     /**
      * get the magnitude of a complex number
      */
@@ -44,9 +48,7 @@ export class Complex {
     }
 
     get polar() {
-        const r = Math.hypot(this.real, this.imag);
-        const theta = Math.atan2(this.imag, this.real);
-        return { r, theta };
+        return { r: Math.hypot(this.real, this.imag), theta: Math.atan2(this.imag, this.real) };
     }
 
     /**
@@ -55,10 +57,10 @@ export class Complex {
      * @returns sum of both numbers
      */
     add (other) {
-        if (this.infinite() && other.infinite())
+        if (this.isInfinite() && other.isInfinite())
             return Complex.NaN
 
-        if (this.infinite() || other.infinite())
+        if (this.isInfinite() || other.isInfinite())
             return Complex.Infinity
 
         return new Complex(
@@ -73,10 +75,10 @@ export class Complex {
      * @returns subtraction of this - other
      */
     sub (other) {
-        if (this.infinite() && other.infinite())
+        if (this.isInfinite() && other.isInfinite())
             return Complex.NaN
 
-        if (this.infinite() || other.infinite())
+        if (this.isInfinite() || other.isInfinite())
             return Complex.Infinity
 
         return new Complex(
@@ -156,7 +158,7 @@ export class Complex {
         const R = Math.pow(r0, w.real) * Math.exp(-w.imag * theta0);
         const Theta = w.real * theta0 + w.imag * Math.log(r0);
 
-        return new Complex(R * Math.cos(Theta), R * Math.sin(Theta));
+        return Complex.fromPolar(R, Theta);
     }
 
     /**

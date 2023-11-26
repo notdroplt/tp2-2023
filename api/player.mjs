@@ -15,7 +15,10 @@ router.get('/:name', async (req, res) => {
 
     return res.send({
         playertag: player.dataValues.playertag,
-        password: enablePrivate ? player.dataValues.password : null
+        password: enablePrivate ? player.dataValues.password : null,
+        position: {
+            planet: null
+        }
     })
     
 })

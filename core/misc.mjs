@@ -7,19 +7,19 @@ class Coordinate {
 
     /**
      * 3d coordinate
-     * @param {Number} x Coordinate x
-     * @param {Number} y Coordinate y
-     * @param {Number} z Coordinate z
+     * @param {Number} real real part
+     * @param {Number} imag imaginary part
+     * @param {Number} perp perpendicular part 
      */
-    constructor(x, y, z) {
-        this._x = x;
-        this._y = y;
-        this._z = z;
+    constructor(real, imag, perp) {
+        this._real = real;
+        this._imag = imag;
+        this._perp = perp;
     }
 
-    get x() { return this._x; }
-    get y() { return this._y; }
-    get z() { return this._z; }
+    get real() { return this._real; }
+    get imag() { return this._imag; }
+    get perp() { return this._perp; }
 
     /**
      * Get the distance between two points
@@ -28,9 +28,9 @@ class Coordinate {
      */
     distance(other) {
         return Math.sqrt(
-            Math.pow(this.x - other.x, 2) +
-            Math.pow(this.y - other.y, 2) +
-            Math.pow(this.z - other.z, 2)
+            Math.pow(this.x - other.real, 2) +
+            Math.pow(this.y - other.imag, 2) +
+            Math.pow(this.z - other.perp, 2)
         );
     }
 

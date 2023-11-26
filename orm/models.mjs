@@ -87,11 +87,7 @@ export function generate_models(conn) {
 
 
     const Planet = conn.define('Planet', {
-        name: {
-            type: DataTypes.CHAR(80),
-            allowNull: false,
-            unique: true
-        },
+        name: { type: DataTypes.CHAR(16), allowNull: false },
 
         mass: { type: DataTypes.DOUBLE, allowNull: false },
 
