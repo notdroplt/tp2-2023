@@ -4,6 +4,16 @@ let playerinfo = {
     session: null
 }
 
+errors = [
+ USERNAME_LENGTH ,
+ USERNAME_DOES_NOT_EXIST ,
+ USERNAME_PASSWORD_MISMATCH ,
+ USERNAME_ALREADY_TAKEN ,
+ USERID_DOES_NOT_EXIST ,
+ UNDEFINED_USERID ,
+ INVALID_SESSION ,
+]
+
 /**
  * authenticate player
  * @param {'login' | 'signin'} action action (either 'signin' or 'login')
@@ -29,9 +39,8 @@ function authenticate(action) {
         })
             .then(res => res.json())
             .then(json => {
-                console.log(json)
                 if (json.ok == false) {
-                    authresp.innerHTML = json.error
+                    authresp.innerHTML = errors[json.error]
                     return
                 }
                 localStorage.setItem("playertag", json.playertag)
@@ -53,7 +62,6 @@ function authenticate(action) {
         })
         .then(res => res.json())
         .then(json => {
-            console.log(json)
             if (!json.ok) {
                 authresp.innerHTML = json.error
                 return
@@ -61,7 +69,7 @@ function authenticate(action) {
 
             playerinfo.session = json.session
 
-            removeLoginScreen()
+            startGame()
         })
 }
 

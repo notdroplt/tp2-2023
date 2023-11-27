@@ -8,6 +8,7 @@ caso somente as partes públicas sejam requisitadas, outras áreas receberão `n
 ```ts
 {
     "playerid": string, /// opcional
+    "sessionid": string /// requerida
 }
 ```
 

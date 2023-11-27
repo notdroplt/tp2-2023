@@ -32,3 +32,4 @@ function drag(e) {
 function stopDragging() {
     isDragging = false;
 }
+

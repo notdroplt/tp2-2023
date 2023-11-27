@@ -21,6 +21,10 @@ export function generate_models(conn) {
         coordy: { type: DataTypes.DOUBLE, allowNull: false, defaultValue: 0.0 },
 
         coordz: { type: DataTypes.DOUBLE, allowNull: false, defaultValue: 0.0 },
+
+        travelcoordx: { type: DataTypes.DOUBLE },
+        travelcoordy: { type: DataTypes.DOUBLE },
+        travelcoordz: { type: DataTypes.DOUBLE },
     })
 
 
@@ -133,12 +137,12 @@ export function generate_models(conn) {
 
     Planet.Player = Planet.hasMany(Player)
     Planet.System = Planet.belongsTo(System)
-    
+
     System.Player = System.hasMany(Player)
     System.Planet = System.hasMany(Planet)
-    
+
     Inventory.Player = Inventory.belongsTo(Player)
-    
+
     return { Player, Inventory, Planet, System }
 }
 

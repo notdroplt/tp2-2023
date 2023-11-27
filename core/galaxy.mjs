@@ -14,5 +14,5 @@ export class Galaxy {
         this.seed = this.position.conjugate.inverse.mul(universeSeed)
     }
 
-    3
+    
 }

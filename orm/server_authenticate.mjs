@@ -3,7 +3,7 @@ import crypto from "node:crypto"
 import { database } from "./database.mjs"
 import * as serror from "./server_auth_errors.mjs"
 import { Router } from "express"
-import { get_session } from "./session.mjs"
+import { exists_session, get_session } from "./session.mjs"
 
 let router = Router()
 
@@ -14,8 +14,6 @@ router.post('/signin', async (req, res) => {
             error: serror.USERNAME_LENGTH
         })
     }
-
-    console.log(req.body)
 
     const records = await database.models.Player.findAll({
         where: {
@@ -94,5 +92,16 @@ router.post('/signup', async (req, res) => {
         playerid: playerid
     })
 })
+
+
+function authenticate_body(req, res, next) {
+    const cur_session = exists_session(req.body.playerid)
+    if (cur_session != 0) {
+        return res.send({
+            ok: false,
+            error: serror.INVALID_SESSION
+        })
+    }
+}
 
 export { router as auth_router }
