@@ -3,20 +3,24 @@ import crypto from "node:crypto"
 import { database } from "./database.mjs"
 import * as serror from "./server_auth_errors.mjs"
 import { Router } from "express"
+import { get_session } from "./session.mjs"
 
 let router = Router()
 
 router.post('/signin', async (req, res) => {
-    if (req.body.player.length < 4 || req.body.player.length > 30) {
+    if (req.body.playertag.length < 4 || req.body.playertag.length > 30) {
         return res.send({
             ok: false,
             error: serror.USERNAME_LENGTH
         })
     }
 
-    const records = await database.models.User.findAll({
+    console.log(req.body)
+
+    const records = await database.models.Player.findAll({
         where: {
-            playername: req.body.player,
+            playertag: req.body.playertag,
+            playerid: req.body.playerid
         }
     })
 
@@ -29,16 +33,7 @@ router.post('/signin', async (req, res) => {
 
     const player = records[0]
 
-    let given_hash = crypto.createHash('sha256')
-    let actual_hash = crypto.createHash('sha256')
-
-    given_hash.update(req.body.password)
-    actual_hash.update(player.dataValues.password)
-
-    const given_digest = given_hash.digest()
-    const actual_digest = actual_hash.digest()
-
-    if (given_digest !== actual_digest) {
+    if (req.body.playerid !== player.dataValues.playerid) {
         return res.send({
             ok: false,
             error: serror.USERNAME_PASSWORD_MISMATCH
@@ -46,7 +41,8 @@ router.post('/signin', async (req, res) => {
     }
 
     return res.send({
-        ok: true
+        ok: true,
+        session: get_session(req.body.playerid)
     })
 })
 

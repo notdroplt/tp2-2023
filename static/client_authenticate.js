@@ -1,3 +1,9 @@
+let playerinfo = {
+    tag: localStorage.getItem("playertag"),
+    id: localStorage.getItem("playerid"),
+    session: null
+}
+
 /**
  * authenticate player
  * @param {'login' | 'signin'} action action (either 'signin' or 'login')
@@ -26,11 +32,12 @@ function authenticate(action) {
                 console.log(json)
                 if (json.ok == false) {
                     authresp.innerHTML = json.error
+                    return
                 }
                 localStorage.setItem("playertag", json.playertag)
                 localStorage.setItem("playerid", json.playerid)
             })
-    else {
+    else 
         fetch(`/api/auth/signin`, {
             method: 'POST',
             headers: {
@@ -41,16 +48,24 @@ function authenticate(action) {
             cache: "default",
             body: JSON.stringify({
                 playertag: playerinfo.tag,
-                playerid: playerinfo.id
+                playerid: playerinfo.id,
             })
         })
-    }
+        .then(res => res.json())
+        .then(json => {
+            console.log(json)
+            if (!json.ok) {
+                authresp.innerHTML = json.error
+                return
+            }
+
+            playerinfo.session = json.session
+
+            removeLoginScreen()
+        })
 }
 
-let playerinfo = {
-    tag: localStorage.getItem("playertag"),
-    id: localStorage.getItem("playerid")
-}
+
 
 window.onload = () => {
     if (playerinfo.tag === null && playerinfo.id === null) return
